@@ -25,7 +25,3 @@ A unified API interface for all modern LLMs, enabling seamless model switching a
 5. **Chat Interface:**
     - GPT-like interface for model selection during queries
 
-
-Personal Notes:
-- Use Pydantic for Data Structures
-- Use an Interface
