@@ -1,9 +1,6 @@
-# interface.py
-## Interface for each provider
-
 from typing import Any
 from abc import ABC, abstractmethod
-from .datamodels import ChatCompletionRequest, ChatCompletionResponse
+from .datamodels import ChatCompletionRequest, ChatCompletionResponse, ImageGenerationRequest, ImageGenerationResponse
 
 class ChatProvider(ABC):
     """Abstract base class for chat completion providers"""
@@ -12,12 +9,16 @@ class ChatProvider(ABC):
     async def chat_complete(self, request: ChatCompletionRequest) -> ChatCompletionResponse:
         """
         Generate a chat completion response for the given request
-        
-        Args:
-            request: ChatCompletionRequest containing the input parameters
-        
-        Returns:
-            ChatCompletionResponse containing the generated response
+        """
+        pass
+
+class ImageProvider(ABC):
+    """Abstract base class for image generation providers"""
+    
+    @abstractmethod
+    async def generate_image(self, request: ImageGenerationRequest) -> ImageGenerationResponse:
+        """
+        Generate an image based on the given request
         """
         pass
 

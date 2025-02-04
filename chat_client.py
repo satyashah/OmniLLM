@@ -1,5 +1,5 @@
 """
-This is the client that will be used to test the models.
+This is the client that will be used to test the chat models.
 
 It will be grabbing the models from the models list and then testing them with a test query.
 """
@@ -9,17 +9,16 @@ import requests
 
 BASE_URL = "http://localhost:8000"
 
-class ModelTester:
+class ChatModelTester:
     def __init__(self):
         os.system('cls')
         self.models = self.get_available_models()
         
     def get_available_models(self) -> List[Dict[str, Any]]:
-        """Get list of available models from the API"""
-        response = requests.get(f"{BASE_URL}/v1/models")
+        """Get list of available chat models from the API"""
+        response = requests.get(f"{BASE_URL}/v1/models/chat")
         models_data = response.json()
-        # print("\n=== Available Models ===")
-        # print(json.dumps(models_data, indent=2))
+        # Filter for chat models only
         return models_data["models"]
 
 
@@ -56,8 +55,8 @@ class ModelTester:
         }
 
     def validate_models(self, test_query):
-        print("\n=== Model Validation Results ===")
-        print(f"Found {len(self.models)} models to test\n")
+        print("\n=== Chat Model Validation Results ===")
+        print(f"Found {len(self.models)} chat models to test\n")
         
         all_passed = True
         for model in self.models:
@@ -85,5 +84,5 @@ class ModelTester:
 
 if __name__ == "__main__":
     test_query = "What is the capital of France?"
-    tester = ModelTester()
+    tester = ChatModelTester()
     tester.validate_models(test_query)

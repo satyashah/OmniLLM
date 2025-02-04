@@ -1,14 +1,19 @@
 from typing import Dict, Any
 import openai
-from app.core.interfaces import ChatProvider
-from app.core.datamodels import ChatCompletionRequest, ChatCompletionResponse, ChatMessage
+from app.core.interfaces import ChatProvider, ImageProvider
+from app.core.datamodels import (
+    ChatCompletionRequest, 
+    ChatCompletionResponse,
+    ImageGenerationRequest,
+    ImageGenerationResponse
+)
 from app.core.exceptions import ProviderError
 from dotenv import load_dotenv
 
 load_dotenv(".env")
 
-class OpenAIProvider(ChatProvider):
-    """OpenAI chat completion provider"""
+class OpenAIProvider(ChatProvider, ImageProvider):
+    """OpenAI provider supporting both chat and image generation"""
     
     def __init__(self):
         """Initialize the OpenAI provider with API key from environment"""
@@ -49,6 +54,28 @@ class OpenAIProvider(ChatProvider):
                     "prompt_tokens": response.usage.prompt_tokens,
                     "completion_tokens": response.usage.completion_tokens
                 }
+            )
+            
+        except openai.APIError as e:
+            raise ProviderError(f"OpenAI API error: {str(e)}")
+        except Exception as e:
+            raise ProviderError(f"Unexpected error: {str(e)}")
+
+    async def generate_image(self, request: ImageGenerationRequest) -> ImageGenerationResponse:
+        """Generate images using DALL-E"""
+        try:
+            response = await self.client.images.generate(
+                model=request.model,
+                prompt=request.prompt,
+                size=request.size.value,
+                quality=request.quality,
+                n=request.n
+            )
+            
+            return ImageGenerationResponse(
+                urls=[image.url for image in response.data],
+                model=request.model,
+                provider="openai"
             )
             
         except openai.APIError as e:
