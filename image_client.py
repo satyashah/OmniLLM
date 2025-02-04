@@ -10,14 +10,11 @@ import base64
 from pathlib import Path
 
 BASE_URL = "http://localhost:8000"
-OUTPUT_DIR = "test_outputs"
 
 class ImageModelTester:
     def __init__(self):
         os.system('cls')
         self.models = self.get_available_models()
-        # Create output directory if it doesn't exist
-        Path(OUTPUT_DIR).mkdir(exist_ok=True)
         
     def get_available_models(self) -> List[Dict[str, Any]]:
         """Get list of available image models from the API"""
