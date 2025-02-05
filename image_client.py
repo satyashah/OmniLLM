@@ -69,6 +69,6 @@ class ImageModelTester:
         print("Final Result:", "✅ ALL MODELS RESPONDING" if all_passed else "❌ SOME MODELS FAILED")
 
 if __name__ == "__main__":
-    test_prompt = "A serene landscape with mountains and a lake at sunset"
+    test_prompt = "Pink panda on a skateboard at maryland university chasing a smoking snoop dogg poodle"
     tester = ImageModelTester()
     tester.validate_models(test_prompt) 
