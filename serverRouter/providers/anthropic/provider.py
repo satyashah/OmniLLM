@@ -1,8 +1,8 @@
 from typing import Dict, Any
 import anthropic
-from app.core.interfaces import ChatProvider
-from app.core.datamodels import ChatCompletionRequest, ChatCompletionResponse, ChatMessage
-from app.core.exceptions import ProviderError
+from serverRouter.core.interfaces import ChatProvider
+from serverRouter.core.datamodels import ChatCompletionRequest, ChatCompletionResponse, ChatMessage
+from serverRouter.core.exceptions import ProviderError
 from dotenv import load_dotenv
 
 load_dotenv(".env")

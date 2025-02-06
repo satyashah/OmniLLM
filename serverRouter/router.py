@@ -3,17 +3,17 @@
 
 from fastapi import FastAPI, HTTPException, Security, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from app.core.datamodels import (
+from serverRouter.core.datamodels import (
     ChatCompletionRequest, 
     ChatCompletionResponse, 
     ModelProvider,
     ImageGenerationRequest,
     ImageGenerationResponse
 )
-from app.providers.anthropic.provider import AnthropicProvider
-from app.providers.openai.provider import OpenAIProvider
+from serverRouter.providers.anthropic.provider import AnthropicProvider
+from serverRouter.providers.openai.provider import OpenAIProvider
 
-from app.core.models import (
+from serverRouter.core.models import (
     MODELS,
     CHAT_MODELS,
     IMAGE_MODELS

@@ -1,13 +1,13 @@
 from typing import Dict, Any
 import openai
-from app.core.interfaces import ChatProvider, ImageProvider
-from app.core.datamodels import (
+from serverRouter.core.interfaces import ChatProvider, ImageProvider
+from serverRouter.core.datamodels import (
     ChatCompletionRequest, 
     ChatCompletionResponse,
     ImageGenerationRequest,
     ImageGenerationResponse
 )
-from app.core.exceptions import ProviderError
+from serverRouter.core.exceptions import ProviderError
 from dotenv import load_dotenv
 
 load_dotenv(".env")
