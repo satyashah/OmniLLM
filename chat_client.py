@@ -5,52 +5,27 @@ It will be grabbing the models from the models list and then testing them with a
 """
 import os
 from typing import Dict, List, Any
-import requests
-
-BASE_URL = "http://localhost:8000"
+from clientLib.APIClient import APIClient
 
 class ChatModelTester:
     def __init__(self):
         os.system('cls')
-        self.models = self.get_available_models()
-        
-    def get_available_models(self) -> List[Dict[str, Any]]:
-        """Get list of available chat models from the API"""
-        response = requests.get(f"{BASE_URL}/v1/models/chat")
-        models_data = response.json()
-        # Filter for chat models only
-        return models_data["models"]
+        self.client = APIClient()
+        self.models = self.client.get_available_models("chat")
 
-
-    def test_model(self, test_query, model_info: Dict[str, Any]) -> Dict[str, Any]:
+    def test_model(self, test_query: str, model_info: Dict[str, Any]) -> Dict[str, Any]:
         """Test the chat completion endpoint for a specific model"""
-        request_data = {
-            "model": model_info["id"],
-            "messages": [
-                {
-                    "role": "user",
-                    "content": test_query
-                }
-            ],
-            "temperature": 0.7,
-            "max_tokens": 100
-        }
+        messages = [{"role": "user", "content": test_query}]
         
-        # print(f"\n=== Testing Chat Completion with {model_info['id']} ===")
-        # print("Request:")
-        # print(json.dumps(request_data, indent=2))
-        
-        response = requests.post(
-            f"{BASE_URL}/v1/chat/completions",
-            json=request_data
+        response = self.client.chat(
+            messages=messages,
+            model=model_info["id"],
+            temperature=0.7,
+            max_tokens=100
         )
         
-        response_data = response.json()
-        # print("\nResponse:")
-        # print(json.dumps(response_data, indent=2))
-        
         return {
-            "content": response_data["content"],
+            "content": response["content"],
             "provider": model_info.get("provider", "unknown")
         }
 

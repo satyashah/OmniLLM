@@ -1,20 +1,18 @@
 ## main.py
 ## Entry point for the application
 
-from fastapi import FastAPI, HTTPException
-from typing import Dict, Type
-from app.core.interfaces import ChatProvider
+from fastapi import FastAPI, HTTPException, Security, Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.core.datamodels import (
     ChatCompletionRequest, 
     ChatCompletionResponse, 
-    ModelInfo,
     ModelProvider,
     ImageGenerationRequest,
     ImageGenerationResponse
 )
-from app.core.exceptions import ProviderNotFoundException, ProviderError
 from app.providers.anthropic.provider import AnthropicProvider
 from app.providers.openai.provider import OpenAIProvider
+
 from app.core.models import (
     MODELS,
     CHAT_MODELS,
@@ -23,6 +21,7 @@ from app.core.models import (
 
 
 app = FastAPI(title="OmniLLM", description="One Key, One API, Hundreds of Models")
+security = HTTPBearer()
 
 # Provider instances cache
 PROVIDERS = {
@@ -30,8 +29,20 @@ PROVIDERS = {
     ModelProvider.ANTHROPIC: AnthropicProvider()
 }
 
+VALID_API_KEYS = {
+    "test-sk1o83e",
+}
+
+def verify_api_key(credentials: HTTPAuthorizationCredentials = Security(security)) -> str:
+    if credentials.credentials not in VALID_API_KEYS:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid API key"
+        )
+    return credentials.credentials
+
 @app.get("/v1/models")
-async def list_models():
+async def list_models(api_key: str = Depends(verify_api_key)):
     """List all available models"""
     return {
         "models": [
@@ -44,7 +55,7 @@ async def list_models():
     }
 
 @app.get("/v1/models/chat")
-async def list_chat_models():
+async def list_chat_models(api_key: str = Depends(verify_api_key)):
     """List all available chat models"""
 
     return {
@@ -58,7 +69,7 @@ async def list_chat_models():
     }
 
 @app.get("/v1/models/image")
-async def list_image_models():
+async def list_image_models(api_key: str = Depends(verify_api_key)):
     """List all available image models"""
     return {
         "models": [
@@ -74,6 +85,7 @@ async def list_image_models():
 @app.post("/v1/chat/completions")
 async def create_chat_completion(
     request: ChatCompletionRequest,
+    api_key: str = Depends(verify_api_key)
 ) -> ChatCompletionResponse:
 
     """
@@ -108,6 +120,7 @@ async def create_chat_completion(
 @app.post("/v1/images/generate")
 async def create_image(
     request: ImageGenerationRequest,
+    api_key: str = Depends(verify_api_key)
 ) -> ImageGenerationResponse:
     """
     Generate images using the specified model
