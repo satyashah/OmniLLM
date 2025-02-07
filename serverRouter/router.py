@@ -12,21 +12,21 @@ from serverRouter.core.datamodels import (
 )
 from serverRouter.providers.anthropic.provider import AnthropicProvider
 from serverRouter.providers.openai.provider import OpenAIProvider
-
-from serverRouter.core.models import (
-    MODELS,
-    CHAT_MODELS,
-    IMAGE_MODELS
-)
-
+from serverRouter.providers.gemini.provider import GeminiProvider
+from serverRouter.providers.llama.provider import LlamaProvider
+from serverRouter.core.models import MODELS, CHAT_MODELS, IMAGE_MODELS
 
 app = FastAPI(title="OmniLLM", description="One Key, One API, Hundreds of Models")
 security = HTTPBearer()
 
-# Provider instances cache
+# Instantiate provider objects.
+# For OpenAI and Anthropic, we already have them.
+# For Gemini and Llama, instantiate as well.
 PROVIDERS = {
     ModelProvider.OPENAI: OpenAIProvider(),
-    ModelProvider.ANTHROPIC: AnthropicProvider()
+    ModelProvider.ANTHROPIC: AnthropicProvider(),
+    ModelProvider.GEMINI: GeminiProvider(),  # Ensure GEMINI_API_KEY is set in .env
+    ModelProvider.LLAMA: LlamaProvider(model_path="./llama2-7b-chat")  # Adjust model_path as needed.
 }
 
 VALID_API_KEYS = {
@@ -48,7 +48,7 @@ async def list_models(api_key: str = Depends(verify_api_key)):
         "models": [
             {
                 "id": model_id,
-                **model_info.model_dump()
+                **model_info.dict()
             }
             for model_id, model_info in MODELS.items()
         ]
@@ -57,12 +57,11 @@ async def list_models(api_key: str = Depends(verify_api_key)):
 @app.get("/v1/models/chat")
 async def list_chat_models(api_key: str = Depends(verify_api_key)):
     """List all available chat models"""
-
     return {
         "models": [
             {
                 "id": model_id,
-                **model_info.model_dump()
+                **model_info.dict()
             }
             for model_id, model_info in CHAT_MODELS.items()
         ]
@@ -75,19 +74,17 @@ async def list_image_models(api_key: str = Depends(verify_api_key)):
         "models": [
             {
                 "id": model_id,
-                **model_info.model_dump()
+                **model_info.dict()
             }
             for model_id, model_info in IMAGE_MODELS.items()
         ]
     }
-
 
 @app.post("/v1/chat/completions")
 async def create_chat_completion(
     request: ChatCompletionRequest,
     api_key: str = Depends(verify_api_key)
 ) -> ChatCompletionResponse:
-
     """
     Create a chat completion using the specified model
     """
@@ -126,7 +123,7 @@ async def create_image(
     Generate images using the specified model
     """
     try:
-        # For now, we only support DALL-E models from OpenAI
+        # Look up the image model info
         model_info = IMAGE_MODELS.get(request.model)
         if not model_info:
             raise HTTPException(
@@ -135,7 +132,7 @@ async def create_image(
             )
         request.model = model_info.name
         
-        # Get the OpenAI provider
+        # Get the provider for this model
         provider = PROVIDERS.get(model_info.provider)
         if not provider:
             raise HTTPException(
@@ -149,5 +146,3 @@ async def create_image(
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-

@@ -8,77 +8,66 @@ from serverRouter.core.datamodels import (
     ImageGenerationResponse
 )
 from serverRouter.core.exceptions import ProviderError
-from dotenv import load_dotenv
 
-load_dotenv(".env")
-
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 class OpenAIProvider(ChatProvider, ImageProvider):
-    """OpenAI provider supporting both chat and image generation"""
+    """OpenAI provider supporting chat completions and image generation,
+       including GPT-4, GPT-3.5, GPT-4o, and O1 models."""
     
     def __init__(self):
         """Initialize the OpenAI provider with API key from environment"""
         try:
-            # openai.api_key should be set via environment variable OPENAI_API_KEY
-            self.client = openai.AsyncOpenAI()
+            openai.api_key = openai.api_key or None  # Expect key in env variable OPENAI_API_KEY
+            if not openai.api_key:
+                raise ProviderError("OPENAI_API_KEY not set in environment.")
+            self.client = openai
         except Exception as e:
             raise ProviderError(f"Failed to initialize OpenAI client: {str(e)}")
             
     async def chat_complete(self, request: ChatCompletionRequest) -> ChatCompletionResponse:
         """
-        Generate a chat completion using OpenAI's API
-        
-        Args:
-            request: ChatCompletionRequest containing the input parameters
-            
-        Returns:
-            ChatCompletionResponse containing the generated response
+        Generate a chat completion using OpenAI's API.
+        Supports GPT-4, GPT-3.5, GPT-4o, O1, etc.
         """
         try:
-            # Convert our generic request to OpenAI-specific format
-            response = await self.client.chat.completions.create(
+            response = await self.client.ChatCompletion.acreate(
                 model=request.model,
-                messages=[
-                    {"role": msg.role, "content": msg.content}
-                    for msg in request.messages
-                ],
+                messages=[{"role": msg.role, "content": msg.content} for msg in request.messages],
                 temperature=request.temperature,
-                max_tokens=request.max_tokens if request.max_tokens else None
+                max_tokens=request.max_tokens if request.max_tokens else None,
+                stream=False
             )
-            
-            # Convert OpenAI response to our generic format
             return ChatCompletionResponse(
                 model=response.model,
                 content=response.choices[0].message.content,
                 provider="openai",
                 usage={
-                    "prompt_tokens": response.usage.prompt_tokens,
-                    "completion_tokens": response.usage.completion_tokens
+                    "prompt_tokens": response.usage.get("prompt_tokens", 0),
+                    "completion_tokens": response.usage.get("completion_tokens", 0)
                 }
             )
-            
-        except openai.APIError as e:
+        except openai.error.OpenAIError as e:
             raise ProviderError(f"OpenAI API error: {str(e)}")
         except Exception as e:
             raise ProviderError(f"Unexpected error: {str(e)}")
 
     async def generate_image(self, request: ImageGenerationRequest) -> ImageGenerationResponse:
-        """Generate images using DALL-E"""
+        """Generate images using OpenAI's image API (DALL-E)"""
         try:
-            response = await self.client.images.generate(
+            response = await self.client.Image.create(
                 model=request.model,
                 prompt=request.prompt,
-                size=request.size.value,
-                quality=request.quality,
-                n=request.n
+                n=request.n,
+                size=request.size.value
             )
-            
             return ImageGenerationResponse(
-                urls=[image.url for image in response.data],
+                urls=[image["url"] for image in response["data"]],
                 model=request.model,
                 provider="openai"
             )
-            
-        except openai.APIError as e:
+        except openai.error.OpenAIError as e:
             raise ProviderError(f"OpenAI API error: {str(e)}")
         except Exception as e:
             raise ProviderError(f"Unexpected error: {str(e)}")
+
