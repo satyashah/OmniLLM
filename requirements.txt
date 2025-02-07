@@ -194,3 +194,5 @@ Werkzeug==3.0.2
 yarl==1.9.4
 zope.interface==6.3
 zstandard==0.23.0
+google-ai-generativelanguage==0.6.10
+google-generativeai==0.8.3
