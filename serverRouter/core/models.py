@@ -1,6 +1,6 @@
 from .datamodels import ModelInfo, ModelProvider
 
-# Primary model registry
+# Primary chat models registry
 CHAT_MODELS = {
     "gpt-4": ModelInfo(
         name="gpt-4",
@@ -14,6 +14,18 @@ CHAT_MODELS = {
         description="OpenAI's fast and efficient model with good capabilities",
         max_tokens=4096
     ),
+    "gpt-4o-mini": ModelInfo(
+        name="gpt-4o-mini",
+        provider=ModelProvider.OPENAI,
+        description="OpenAI's GPT-4o variant (mini) for lightweight generation",
+        max_tokens=4096
+    ),
+    "o1-mini": ModelInfo(
+        name="o1-mini",
+        provider=ModelProvider.OPENAI,
+        description="OpenAI's O1 model variant optimized for cost and performance",
+        max_tokens=4096
+    ),
     "claude-3-opus": ModelInfo(
         name="claude-3-opus-20240229",
         provider=ModelProvider.ANTHROPIC,
@@ -25,9 +37,22 @@ CHAT_MODELS = {
         provider=ModelProvider.ANTHROPIC,
         description="Anthropic's balanced model for performance and efficiency",
         max_tokens=4096,
+    ),
+    "llama2-7b-chat": ModelInfo(
+        name="llama2-7b-chat",
+        provider=ModelProvider.LLAMA,
+        description="Locally hosted Llama2 7B Chat model",
+        max_tokens=4096,
+    ),
+    "gemini-2.0-flash": ModelInfo(
+        name="gemini-2.0-flash",
+        provider=ModelProvider.GEMINI,
+        description="Gemini 2.0 Flash for chat completions",
+        max_tokens=4096,
     )
 }
 
+# Primary image models registry
 IMAGE_MODELS = {
     "dall-e-3": ModelInfo(
         name="dall-e-3",
@@ -38,23 +63,24 @@ IMAGE_MODELS = {
         name="dall-e-2",
         provider=ModelProvider.OPENAI,
         description="OpenAI's efficient image generation model",
+    ),
+    "gemini-2.0-flash-img": ModelInfo(
+        name="gemini-2.0-flash-img",
+        provider=ModelProvider.GEMINI,
+        description="Gemini 2.0 Flash for image generation"
     )
 }
 
 # Combined models dictionary
 MODELS = {**CHAT_MODELS, **IMAGE_MODELS}
 
-# Index by provider
+# Index models by provider for easy lookup
 MODELS_BY_PROVIDER = {}
 for model_id, model in MODELS.items():
     MODELS_BY_PROVIDER.setdefault(model.provider, []).append(model_id)
 
 def get_model_by_id(model_id: str) -> ModelInfo | None:
     return MODELS.get(model_id)
-
-def get_model_by_name(name: str) -> ModelInfo | None:
-    model_id = MODELS_BY_PROVIDER.get(name)
-    return MODELS.get(model_id) if model_id else None
 
 def get_models_by_provider(provider: ModelProvider) -> list[ModelInfo]:
     model_ids = MODELS_BY_PROVIDER.get(provider, [])
