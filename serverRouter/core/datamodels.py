@@ -7,7 +7,6 @@ class ModelProvider(str, Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     GEMINI = "gemini"
-    LLAMA = "llama"
 
 class ModelInfo(BaseModel):
     """Information about a model"""

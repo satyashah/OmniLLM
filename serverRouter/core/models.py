@@ -1,4 +1,4 @@
-from .datamodels import ModelInfo, ModelProvider
+from serverRouter.core.datamodels import ModelInfo, ModelProvider
 
 # Primary chat models registry
 CHAT_MODELS = {
@@ -17,13 +17,13 @@ CHAT_MODELS = {
     "gpt-4o-mini": ModelInfo(
         name="gpt-4o-mini",
         provider=ModelProvider.OPENAI,
-        description="OpenAI's GPT-4o variant (mini) for lightweight generation",
+        description="OpenAI's GPT-4o variant (mini) for lightweight generation (requires reasoning access, Tier 5)",
         max_tokens=4096
     ),
-    "o1-mini": ModelInfo(
-        name="o1-mini",
+    "gpt-4o": ModelInfo(
+        name="gpt-4o",
         provider=ModelProvider.OPENAI,
-        description="OpenAI's O1 model variant optimized for cost and performance",
+        description="OpenAI's GPT-4o model for generation without heavy reasoning (suitable for non–Tier 5 accounts)",
         max_tokens=4096
     ),
     "claude-3-opus": ModelInfo(
@@ -38,16 +38,10 @@ CHAT_MODELS = {
         description="Anthropic's balanced model for performance and efficiency",
         max_tokens=4096,
     ),
-    "llama2-7b-chat": ModelInfo(
-        name="llama2-7b-chat",
-        provider=ModelProvider.LLAMA,
-        description="Locally hosted Llama2 7B Chat model",
-        max_tokens=4096,
-    ),
     "gemini-2.0-flash": ModelInfo(
         name="gemini-2.0-flash",
         provider=ModelProvider.GEMINI,
-        description="Gemini 2.0 Flash for chat completions",
+        description="Google Gemini 2.0 Flash for chat completions",
         max_tokens=4096,
     )
 }
@@ -67,7 +61,7 @@ IMAGE_MODELS = {
     "gemini-2.0-flash-img": ModelInfo(
         name="gemini-2.0-flash-img",
         provider=ModelProvider.GEMINI,
-        description="Gemini 2.0 Flash for image generation"
+        description="Google Gemini 2.0 Flash for image generation"
     )
 }
 

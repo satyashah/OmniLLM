@@ -1,6 +1,3 @@
-## main.py
-## Entry point for the application
-
 from fastapi import FastAPI, HTTPException, Security, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from serverRouter.core.datamodels import (
@@ -13,20 +10,23 @@ from serverRouter.core.datamodels import (
 from serverRouter.providers.anthropic.provider import AnthropicProvider
 from serverRouter.providers.openai.provider import OpenAIProvider
 from serverRouter.providers.gemini.provider import GeminiProvider
-from serverRouter.providers.llama.provider import LlamaProvider
-from serverRouter.core.models import MODELS, CHAT_MODELS, IMAGE_MODELS
+
+
+from serverRouter.core.models import (
+    MODELS,
+    CHAT_MODELS,
+    IMAGE_MODELS
+)
+import os
 
 app = FastAPI(title="OmniLLM", description="One Key, One API, Hundreds of Models")
 security = HTTPBearer()
 
-# Instantiate provider objects.
-# For OpenAI and Anthropic, we already have them.
-# For Gemini and Llama, instantiate as well.
+# Provider instances cache
 PROVIDERS = {
     ModelProvider.OPENAI: OpenAIProvider(),
     ModelProvider.ANTHROPIC: AnthropicProvider(),
-    ModelProvider.GEMINI: GeminiProvider(),  # Ensure GEMINI_API_KEY is set in .env
-    ModelProvider.LLAMA: LlamaProvider(model_path="./llama2-7b-chat")  # Adjust model_path as needed.
+    ModelProvider.GEMINI: GeminiProvider(api_key=os.getenv("GEMINI_API_KEY")),
 }
 
 VALID_API_KEYS = {
@@ -48,7 +48,7 @@ async def list_models(api_key: str = Depends(verify_api_key)):
         "models": [
             {
                 "id": model_id,
-                **model_info.dict()
+                **model_info.model_dump()
             }
             for model_id, model_info in MODELS.items()
         ]
@@ -61,7 +61,7 @@ async def list_chat_models(api_key: str = Depends(verify_api_key)):
         "models": [
             {
                 "id": model_id,
-                **model_info.dict()
+                **model_info.model_dump()
             }
             for model_id, model_info in CHAT_MODELS.items()
         ]
@@ -74,7 +74,7 @@ async def list_image_models(api_key: str = Depends(verify_api_key)):
         "models": [
             {
                 "id": model_id,
-                **model_info.dict()
+                **model_info.model_dump()
             }
             for model_id, model_info in IMAGE_MODELS.items()
         ]
@@ -86,7 +86,7 @@ async def create_chat_completion(
     api_key: str = Depends(verify_api_key)
 ) -> ChatCompletionResponse:
     """
-    Create a chat completion using the specified model
+    Create a chat completion using the specified model.
     """
     try:
         # Look up the model info
@@ -108,7 +108,6 @@ async def create_chat_completion(
         
         # Create the completion
         response = await provider.chat_complete(request)
-        
         return response
     
     except Exception as e:
@@ -120,10 +119,10 @@ async def create_image(
     api_key: str = Depends(verify_api_key)
 ) -> ImageGenerationResponse:
     """
-    Generate images using the specified model
+    Generate images using the specified model.
     """
     try:
-        # Look up the image model info
+        # Look up the model info
         model_info = IMAGE_MODELS.get(request.model)
         if not model_info:
             raise HTTPException(
