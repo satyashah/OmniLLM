@@ -13,7 +13,7 @@ from serverRouter.core.datamodels import (
 from serverRouter.providers.anthropic.provider import AnthropicProvider
 from serverRouter.providers.openai.provider import OpenAIProvider
 from serverRouter.providers.gemini.provider import GeminiProvider
-from serverRouter.providers.llama.provider import LlamaProvider
+# from serverRouter.providers.llama.provider import LlamaProvider
 from serverRouter.core.models import MODELS, CHAT_MODELS, IMAGE_MODELS
 
 app = FastAPI(title="OmniLLM", description="One Key, One API, Hundreds of Models")
@@ -26,7 +26,6 @@ PROVIDERS = {
     ModelProvider.OPENAI: OpenAIProvider(),
     ModelProvider.ANTHROPIC: AnthropicProvider(),
     ModelProvider.GEMINI: GeminiProvider(),  # Ensure GEMINI_API_KEY is set in .env
-    ModelProvider.LLAMA: LlamaProvider(model_path="./llama2-7b-chat")  # Adjust model_path as needed.
 }
 
 VALID_API_KEYS = {

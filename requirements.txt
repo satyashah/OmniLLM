@@ -1,6 +1,5 @@
 aiohttp==3.9.5
 aiosignal==1.3.1
-alpaca-trade-api==3.2.0
 annotated-types==0.6.0
 anthropic==0.45.2
 anyio==4.3.0
@@ -153,7 +152,6 @@ rfc3986==2.0.0
 rich==13.9.4
 rsa==4.9
 safetensors==0.4.2
-satyashah_pip @ file:///C:/Programming/2025/Omni/omnipy/satyashah_pip
 scikit-learn==1.4.2
 scipy==1.13.0
 Scrapy==2.11.1

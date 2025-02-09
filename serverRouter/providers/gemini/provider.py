@@ -1,5 +1,5 @@
 from typing import Dict, Any, List
-from google import generativeai as genai
+from google import genai
 from google.generativeai import types
 from serverRouter.core.interfaces import ChatProvider, ImageProvider
 from serverRouter.core.datamodels import ChatCompletionRequest, ChatCompletionResponse, ImageGenerationRequest, ImageGenerationResponse
@@ -7,7 +7,7 @@ from serverRouter.core.exceptions import ProviderError
 from dotenv import load_dotenv
 import os
 
-load_dotenv(".env")
+load_dotenv()
 
 # Remove or comment out any module-level client initialization:
 # GEMINI_API_KEY = None
@@ -25,6 +25,7 @@ class GeminiProvider(ChatProvider, ImageProvider):
             api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
             raise ProviderError("No GEMINI_API_KEY provided. Please add it to your .env file.")
+        print(api_key)
         self.client = genai.Client(api_key=api_key)
 
     async def chat_complete(self, request: ChatCompletionRequest) -> ChatCompletionResponse:

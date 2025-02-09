@@ -1,4 +1,5 @@
 from typing import Dict, Any
+import os
 import openai
 from serverRouter.core.interfaces import ChatProvider, ImageProvider
 from serverRouter.core.datamodels import (
@@ -9,21 +10,25 @@ from serverRouter.core.datamodels import (
 )
 from serverRouter.core.exceptions import ProviderError
 
-from dotenv import load_dotenv, find_dotenv
-load_dotenv(find_dotenv())
+from dotenv import load_dotenv
+load_dotenv()
+
 class OpenAIProvider(ChatProvider, ImageProvider):
     """OpenAI provider supporting chat completions and image generation,
        including GPT-4, GPT-3.5, GPT-4o, and O1 models."""
     
-    def __init__(self):
+    def __init__(self, api_key: str = None):
         """Initialize the OpenAI provider with API key from environment"""
         try:
-            openai.api_key = openai.api_key or None  # Expect key in env variable OPENAI_API_KEY
-            if not openai.api_key:
+            if api_key is None:
+                api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
                 raise ProviderError("OPENAI_API_KEY not set in environment.")
-            self.client = openai
+            self.client = openai.OpenAI(api_key=api_key)
+
         except Exception as e:
             raise ProviderError(f"Failed to initialize OpenAI client: {str(e)}")
+
             
     async def chat_complete(self, request: ChatCompletionRequest) -> ChatCompletionResponse:
         """
