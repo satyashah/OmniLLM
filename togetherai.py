@@ -1,7 +1,7 @@
 # To use the functinos just import function_name from togetherai.py and call it with a prompt
 from together import Together
 
-client = Together(api_key="fa1ccfde80cde2c110b26fb7f9bb5c25b1f62890ef4cd993a5b063a3bb542a43")
+client = Together(api_key="")
 
 # Functions for different models
 def deepseek_70b(prompt: str) -> str:
