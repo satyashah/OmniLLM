@@ -38,15 +38,6 @@ CHAT_MODELS = {
         description="Anthropic's balanced model for performance and efficiency",
         max_tokens=4096,
     ),
-<<<<<<< HEAD
-    # "llama2-7b-chat": ModelInfo(
-    #     name="llama2-7b-chat",
-    #     provider=ModelProvider.LLAMA,
-    #     description="Locally hosted Llama2 7B Chat model",
-    #     max_tokens=4096,
-    # ),
-=======
->>>>>>> Kimia-APIs-Tx
     "gemini-2.0-flash": ModelInfo(
         name="gemini-2.0-flash",
         provider=ModelProvider.GEMINI,
