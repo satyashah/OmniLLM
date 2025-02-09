@@ -1,6 +1,6 @@
 from typing import Dict, Any, List
 import os
-import google.generativeai as genai
+from google import genai
 from google.generativeai import types
 from serverRouter.core.interfaces import ChatProvider, ImageProvider
 from serverRouter.core.datamodels import (
