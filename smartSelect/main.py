@@ -44,10 +44,10 @@ load_dotenv()
 
 
 
-def languageSkills(prompt: str) -> str:
+def gpt(prompt: str) -> str:
     """
     Use GPT to answer a question.
-
+    
     GPT Stats:
     - Model: gpt-4o
     - Math Skills: 80%

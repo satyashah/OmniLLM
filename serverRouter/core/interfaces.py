@@ -1,4 +1,3 @@
-from typing import Any
 from abc import ABC, abstractmethod
 from .datamodels import ChatCompletionRequest, ChatCompletionResponse, ImageGenerationRequest, ImageGenerationResponse
 

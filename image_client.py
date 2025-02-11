@@ -13,15 +13,24 @@ class ImageModelTester:
         self.client = APIClient()
         self.models = self.client.get_available_models("image")
 
-
     def test_model(self, prompt: str, model_info: Dict[str, Any]) -> Dict[str, Any]:
         """Test the image generation endpoint for a specific model"""
-        return self.client.generate_image(
-            prompt=prompt,
-            model=model_info["id"],
-            n=1,
-            size="1024x1024"
-        )
+        if model_info["provider"] == "gemini":  # Check provider type
+            return self.client.generate_image(
+                prompt=prompt,
+                model=model_info["id"],
+                n=1,
+                size="1024x1024",
+                google_cloud_project_id=os.getenv("GOOGLE_CLOUD_PROJECT_ID"),  # Add project ID
+                google_cloud_location=os.getenv("GOOGLE_CLOUD_LOCATION")  # Add location
+            )
+        else:
+            return self.client.generate_image(
+                prompt=prompt,
+                model=model_info["id"],
+                n=1,
+                size="1024x1024"
+            )
 
     def validate_models(self, test_prompt: str):
         print("\n=== Image Model Validation Results ===")
@@ -55,4 +64,4 @@ class ImageModelTester:
 if __name__ == "__main__":
     test_prompt = "Pink panda on a skateboard at maryland university chasing a smoking snoop dogg poodle"
     tester = ImageModelTester()
-    tester.validate_models(test_prompt) 
+    tester.validate_models(test_prompt)

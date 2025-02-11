@@ -1,6 +1,6 @@
 import os
 import requests
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 
 class APIClient:
@@ -64,7 +64,7 @@ class APIClient:
             json=request_data
         )
 
-    def generate_image(self, prompt: str, model: str, n: int = 1, size: str = "1024x1024") -> dict:
+    def generate_image(self, prompt: str, model: str, n: int = 1, size: str = "1024x1024", google_cloud_project_id: Optional[str] = None, google_cloud_location: Optional[str] = None) -> dict:
         """
         Generate images from a text prompt.
         
@@ -81,7 +81,9 @@ class APIClient:
             "model": model,
             "prompt": prompt,
             "n": n,
-            "size": size
+            "size": size,
+            "google_cloud_project_id": google_cloud_project_id, #Added
+            "google_cloud_location": google_cloud_location #Added
         }
         
         return self._make_request(
