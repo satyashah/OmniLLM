@@ -60,3 +60,7 @@ urllib3==2.3.0
 uvicorn==0.34.0
 websockets==14.2
 zstandard==0.23.0
+google-ai-generativelanguage==0.6.10
+google-generativeai==0.8.3
+together
+requests
