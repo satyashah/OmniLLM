@@ -2,30 +2,20 @@
 import asyncio
 from typing import Dict, Any, List, Union
 from google import generativeai as genai
-from google.generativeai import types
 import asyncio
 from typing import Dict, Any, List, Union
-from serverRouter.core.interfaces import ChatProvider, ImageProvider
+from serverRouter.core.interfaces import ChatProvider
 from serverRouter.core.datamodels import (
     ChatCompletionRequest,
     ChatCompletionResponse,
-    ImageGenerationRequest,
-    ImageGenerationResponse
 )
 from serverRouter.core.exceptions import ProviderError
-from serverRouter.helpers.vertex_ai_helper import VertexAiHelper #Import our Helper
 from dotenv import load_dotenv, find_dotenv
 import os
 import logging
-import base64
-import io
-from PIL import Image
-import vertexai
-from vertexai.preview.vision_models import ImageGenerationModel
-
 load_dotenv(find_dotenv())
 
-class GeminiProvider(ChatProvider, ImageProvider):
+class GeminiProvider(ChatProvider):
     def __init__(self, api_key: str = None):
         if api_key is None:
             api_key = os.getenv("GEMINI_API_KEY")
@@ -67,30 +57,3 @@ class GeminiProvider(ChatProvider, ImageProvider):
             logging.exception("Gemini API error (chat):")
             raise ProviderError(f"Gemini API error (chat): {str(e)}")
         
-    #Google's Infrastructure: The Gemini image generation models (like Imagen 3) are hosted on Google's infrastructure (Vertex AI). To access them, you must have a Google Cloud project. It's not possible to abstract away this requirement completely.
-    #Authentication: Google requires authentication to access its cloud services. Even if you could somehow bypass the project ID requirement, you would still need to provide valid credentials.
-
-    async def generate_image(self, request: ImageGenerationRequest) -> ImageGenerationResponse:
-        try:
-
-            # Call the Vertex AI Helper to generate the images
-
-            image_urls = await VertexAiHelper.call(
-                prompt=request.prompt,
-                model_name=request.model,
-                google_cloud_project_id=request.google_cloud_project_id,
-                google_cloud_location=request.google_cloud_location,
-                num_images = request.n, #number of images
-            )
-
-            return ImageGenerationResponse(
-                urls=image_urls,
-                model=request.model,
-                provider="gemini"
-            )
-
-        except Exception as e:
-            logging.exception("Gemini API error (image):")
-            raise ProviderError(f"Gemini API error: {str(e)}")
-   
-    

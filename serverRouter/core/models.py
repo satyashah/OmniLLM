@@ -38,25 +38,25 @@ CHAT_MODELS = {
         description="Anthropic's balanced model for performance and efficiency",
         max_tokens=4096,
     ),
-    "gemini-2.0-flash": ModelInfo(
-        name="gemini-2.0-flash",
-        provider=ModelProvider.GEMINI,
-        description="Google Gemini 2.0 Flash for chat completions",
-        max_tokens=4096,
-    ),
-    "deepseek-chat": ModelInfo(
+    "deepseek-v3": ModelInfo(
         name="deepseek-chat",   # Use the exact string expected by the API.
         provider=ModelProvider.DEEPSEEK,
         description="DeepSeek's general-purpose chat model.",
         max_tokens=4096
     ),
     "deepseek-r1": ModelInfo(
-        name="deepseek-r1",  # Must match API's exact model name
+        name="deepseek-reasoner",  # Must match API's exact model name
         provider=ModelProvider.DEEPSEEK,
         description="DeepSeek-R1 model for tool/API calling",
         max_tokens=4096
     ),
     # --- New Gemini Chat Models ---
+    "gemini-2.0-flash": ModelInfo(
+        name="gemini-2.0-flash",
+        provider=ModelProvider.GEMINI,
+        description="Google Gemini 2.0 Flash for chat completions",
+        max_tokens=4096,
+    ),
     "gemini-2.0-pro-exp-02-05": ModelInfo(
         name="gemini-2.0-pro-exp-02-05",
         provider=ModelProvider.GEMINI,
@@ -101,11 +101,6 @@ IMAGE_MODELS = {
         provider=ModelProvider.OPENAI,
         description="OpenAI's efficient image generation model",
     ),
-    "imagen-3.0-generate-002": ModelInfo( #image generation
-            name="imagen-3.0-generate-002",
-            provider=ModelProvider.GEMINI,
-            description="Google Imagen 3.0 for image generation",
-    )
 }
 
 # Combined models dictionary

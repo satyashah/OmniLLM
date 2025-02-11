@@ -33,12 +33,10 @@ PROVIDERS = {}
 def initialize_providers():
     global PROVIDERS
     try:
-        gemini_api_key = os.getenv("GEMINI_API_KEY") # added
-        print("Router GEMINI_API_KEY value:", gemini_api_key)  #print value of API KEY   # added
         PROVIDERS = {
             ModelProvider.OPENAI: OpenAIProvider(),
             ModelProvider.ANTHROPIC: AnthropicProvider(),
-            ModelProvider.GEMINI: GeminiProvider(api_key=gemini_api_key), # modified to be variable
+            ModelProvider.GEMINI: GeminiProvider(), # modified to be variable
             ModelProvider.DEEPSEEK: DeepSeekProvider()
         }
     except Exception as e:
