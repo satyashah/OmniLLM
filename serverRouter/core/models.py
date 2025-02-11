@@ -38,11 +38,54 @@ CHAT_MODELS = {
         description="Anthropic's balanced model for performance and efficiency",
         max_tokens=4096,
     ),
+    "deepseek-v3": ModelInfo(
+        name="deepseek-chat",   # Use the exact string expected by the API.
+        provider=ModelProvider.DEEPSEEK,
+        description="DeepSeek's general-purpose chat model.",
+        max_tokens=4096
+    ),
+    "deepseek-r1": ModelInfo(
+        name="deepseek-reasoner",  # Must match API's exact model name
+        provider=ModelProvider.DEEPSEEK,
+        description="DeepSeek-R1 model for tool/API calling",
+        max_tokens=4096
+    ),
+    # --- New Gemini Chat Models ---
     "gemini-2.0-flash": ModelInfo(
         name="gemini-2.0-flash",
         provider=ModelProvider.GEMINI,
         description="Google Gemini 2.0 Flash for chat completions",
         max_tokens=4096,
+    ),
+    "gemini-2.0-pro-exp-02-05": ModelInfo(
+        name="gemini-2.0-pro-exp-02-05",
+        provider=ModelProvider.GEMINI,
+        description="Gemini 2.0 Pro (Improved quality)",
+        max_tokens=8192,  # Adjust as needed
+    ),
+    "gemini-2.0-flash-thinking-exp-01-21": ModelInfo(
+        name="gemini-2.0-flash-thinking-exp-01-21",
+        provider=ModelProvider.GEMINI,
+        description="Gemini 2.0 Flash Thinking (Reasoning)",
+        max_tokens=8192,  # Adjust as needed
+    ),
+    "gemini-2.0-flash-exp": ModelInfo(
+        name="gemini-2.0-flash-exp",
+        provider=ModelProvider.GEMINI,
+        description="Gemini 2.0 Flash (Next generation features)",
+        max_tokens=8192,  # Adjust as needed
+    ),
+    "gemini-exp-1206": ModelInfo(
+        name="gemini-exp-1206",
+        provider=ModelProvider.GEMINI,
+        description="Gemini (Quality improvements)",
+        max_tokens=8192, # Adjust as needed
+    ),
+    "learnlm-1.5-pro-experimental": ModelInfo(
+        name="learnlm-1.5-pro-experimental",
+        provider=ModelProvider.GEMINI,
+        description="LearnLM 1.5 Pro Experimental (Audio, images, videos, and text input)",
+        max_tokens=8192,  # Adjust as needed
     )
 }
 
@@ -58,11 +101,6 @@ IMAGE_MODELS = {
         provider=ModelProvider.OPENAI,
         description="OpenAI's efficient image generation model",
     ),
-    "gemini-2.0-flash-img": ModelInfo(
-        name="gemini-2.0-flash-img",
-        provider=ModelProvider.GEMINI,
-        description="Google Gemini 2.0 Flash for image generation"
-    )
 }
 
 # Combined models dictionary
