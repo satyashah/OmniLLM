@@ -163,3 +163,4 @@ yarl==1.9.4
 zope.interface==6.3
 google-ai-generativelanguage==0.6.10
 google-generativeai==0.8.3
+google-cloud-aiplatform 

@@ -1,4 +1,3 @@
-# serverRouter/router.py
 from fastapi import FastAPI, HTTPException, Security, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from serverRouter.core.datamodels import (
@@ -11,6 +10,7 @@ from serverRouter.core.datamodels import (
 from serverRouter.providers.anthropic.provider import AnthropicProvider
 from serverRouter.providers.openai.provider import OpenAIProvider
 from serverRouter.providers.gemini.provider import GeminiProvider  # Make sure the path is correct
+from serverRouter.providers.deepseek.provider import DeepSeekProvider
 from serverRouter.core.models import (
     MODELS,
     CHAT_MODELS,
@@ -18,6 +18,7 @@ from serverRouter.core.models import (
 )
 import os
 import logging
+import asyncio
 
 # Configure logging (if not already configured)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -32,10 +33,13 @@ PROVIDERS = {}
 def initialize_providers():
     global PROVIDERS
     try:
+        gemini_api_key = os.getenv("GEMINI_API_KEY") # added
+        print("Router GEMINI_API_KEY value:", gemini_api_key)  #print value of API KEY   # added
         PROVIDERS = {
             ModelProvider.OPENAI: OpenAIProvider(),
             ModelProvider.ANTHROPIC: AnthropicProvider(),
-            ModelProvider.GEMINI: GeminiProvider(api_key=os.getenv("GEMINI_API_KEY")),
+            ModelProvider.GEMINI: GeminiProvider(api_key=gemini_api_key), # modified to be variable
+            ModelProvider.DEEPSEEK: DeepSeekProvider()
         }
     except Exception as e:
         logging.error(f"Failed to initialize providers: {e}")
@@ -57,7 +61,7 @@ def verify_api_key(credentials: HTTPAuthorizationCredentials = Security(security
     if credentials.credentials not in VALID_API_KEYS:
         raise HTTPException(
             status_code=401,
-            detail="Invalid API key"
+            detail=f"Invalid API key"
         )
     return credentials.credentials
 
@@ -132,7 +136,7 @@ async def create_chat_completion(
 
     except Exception as e:
         logging.exception("Error during chat completion:")  # Log the full exception
-        raise HTTPException(status_code=500, detail=str(e))  # Pass the error message
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/v1/images/generate")
 async def create_image(
@@ -159,9 +163,21 @@ async def create_image(
                 status_code=500,
                 detail=f"Provider not configured: {model_info.provider}"
             )
+        
+        #Google Check if we have the project ID
+        if model_info.provider == ModelProvider.GEMINI and (request.google_cloud_project_id is None or request.google_cloud_location is None):
+            raise HTTPException(
+                status_code=400,
+                detail="Google Cloud Project ID and Location are required for Gemini models"
+            )
+
+        # Log the request and the provider being used
+        logging.info(f"Image generation request received. Model: {request.model}, Provider: {model_info.provider}")
 
         # Generate the images
+
         response = await provider.generate_image(request)
+
         return response
 
     except Exception as e:
