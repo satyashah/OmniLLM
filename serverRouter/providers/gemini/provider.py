@@ -71,26 +71,20 @@ class GeminiProvider(ChatProvider, ImageProvider):
     #Authentication: Google requires authentication to access its cloud services. Even if you could somehow bypass the project ID requirement, you would still need to provide valid credentials.
 
     async def generate_image(self, request: ImageGenerationRequest) -> ImageGenerationResponse:
-        try:
-
-            # Call the Vertex AI Helper to generate the images
-
-            image_urls = await VertexAiHelper.call(
-                prompt=request.prompt,
-                model_name=request.model,
-                google_cloud_project_id=request.google_cloud_project_id,
-                google_cloud_location=request.google_cloud_location,
-                num_images = request.n, #number of images
-            )
-
-            return ImageGenerationResponse(
-                urls=image_urls,
-                model=request.model,
-                provider="gemini"
-            )
-
-        except Exception as e:
-            logging.exception("Gemini API error (image):")
-            raise ProviderError(f"Gemini API error: {str(e)}")
-   
-    
+            try:
+                # Call the Vertex AI Helper asynchronously.
+                image_urls = await VertexAiHelper.call(
+                    prompt=request.prompt,
+                    model_name=request.model,  # This should now be "imagegeneration@006" from your registry.
+                    google_cloud_project_id=request.google_cloud_project_id,
+                    google_cloud_location=request.google_cloud_location,
+                    num_images=request.n,
+                )
+                return ImageGenerationResponse(
+                    urls=image_urls,
+                    model=request.model,
+                    provider="gemini"
+                )
+            except Exception as e:
+                logging.exception("Gemini API error (image):")
+                raise ProviderError(f"Gemini API error: {str(e)}")

@@ -6,7 +6,6 @@ import os #added to get env variable
 # Configure logging, and the logging file
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename="server.log")  # Add filename to log to a file
 
-print("server OMNI_API KEY is:", os.getenv("OMNI_API_KEY"))
 
 if __name__ == "__main__":
     try:

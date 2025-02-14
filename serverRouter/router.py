@@ -11,6 +11,7 @@ from serverRouter.providers.anthropic.provider import AnthropicProvider
 from serverRouter.providers.openai.provider import OpenAIProvider
 from serverRouter.providers.gemini.provider import GeminiProvider  # Make sure the path is correct
 from serverRouter.providers.deepseek.provider import DeepSeekProvider
+from serverRouter.providers.stabilityai.provider import StabilityAIProvider # ADDED
 from serverRouter.core.models import (
     MODELS,
     CHAT_MODELS,
@@ -34,12 +35,14 @@ def initialize_providers():
     global PROVIDERS
     try:
         gemini_api_key = os.getenv("GEMINI_API_KEY") # added
-        print("Router GEMINI_API_KEY value:", gemini_api_key)  #print value of API KEY   # added
+        stability_api_key = os.getenv("STABILITY_API_KEY")  # ADDED
+
         PROVIDERS = {
             ModelProvider.OPENAI: OpenAIProvider(),
             ModelProvider.ANTHROPIC: AnthropicProvider(),
             ModelProvider.GEMINI: GeminiProvider(api_key=gemini_api_key), # modified to be variable
-            ModelProvider.DEEPSEEK: DeepSeekProvider()
+            ModelProvider.DEEPSEEK: DeepSeekProvider(),
+            ModelProvider.STABILITYAI: StabilityAIProvider()  # ADDED
         }
     except Exception as e:
         logging.error(f"Failed to initialize providers: {e}")
