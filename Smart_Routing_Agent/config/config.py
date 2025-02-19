@@ -35,4 +35,3 @@ class Config:
     
     mixinstruct_dataset_name: str = "llm-blender/mix-instruct"
     processed_data_dir: str = "Smart_Routing_Agent/data/processed"
-
