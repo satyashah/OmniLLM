@@ -81,3 +81,4 @@ if __name__ == "__main__":
     # For demonstration, we load the mix-instruct dataset.
     train_data = prepare_training_data(config.mixinstruct_dataset_name, split="train")
     train_ranker(config, train_data)
+
