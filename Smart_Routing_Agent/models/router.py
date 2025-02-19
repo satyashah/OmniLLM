@@ -8,3 +8,4 @@ class Router:
             return {"mode": "single"}
         else:
             return {"mode": "ensemble"}
+
