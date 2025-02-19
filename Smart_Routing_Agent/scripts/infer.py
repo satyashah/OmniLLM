@@ -35,11 +35,12 @@ def generate_candidates(model_id: str, prompt: str, num_candidates: int, max_tok
                 responses.append(response.choices[0].message.content.strip())
             return responses
         else:
-            raise NotImplementedError(f"Provider {model_info.provider} not supported in this demo")
+            # Simulate candidate generation for demo purposes.
+            return [f"[{model_id}] Simulated candidate {i+1} for query: {prompt}" for i in range(num_candidates)]
     except Exception as e:
         logger.error(f"Generation failed for {model_id}: {str(e)}")
         return []
-
+    
 def main(args):
     config = Config()
     router = SmartRouter(config)
@@ -104,3 +105,4 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"Critical error: {str(e)}")
         raise
+
