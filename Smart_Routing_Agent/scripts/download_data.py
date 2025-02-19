@@ -2,7 +2,7 @@
 import os
 from datasets import load_dataset
 import json
-from config import Config
+from Smart_Routing_Agent.config.config import Config
 
 def download_mixinstruct():
     config = Config()
@@ -21,3 +21,4 @@ def download_mixinstruct():
 
 if __name__ == "__main__":
     download_mixinstruct()
+
